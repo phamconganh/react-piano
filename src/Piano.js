@@ -1,9 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import classNames from 'classnames';
-import difference from 'lodash.difference';
+// import classNames from 'classnames';
+// import difference from 'lodash.difference';
 import ControlledPiano from './ControlledPiano';
-import Keyboard from './Keyboard';
+// import Keyboard from './Keyboard';
 
 class Piano extends React.Component {
   static propTypes = {
