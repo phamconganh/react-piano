@@ -79,18 +79,12 @@ describe('<Piano />', () => {
         />,
       );
 
-      wrapper
-        .find('.ReactPiano__Key')
-        .first()
-        .simulate('mousedown');
+      wrapper.find('.ReactPiano__Key').first().simulate('mousedown');
 
       expect(mockPlayNote).toHaveBeenCalledTimes(1);
       expect(mockStopNote).toHaveBeenCalledTimes(0);
 
-      wrapper
-        .find('.ReactPiano__Key')
-        .first()
-        .simulate('mouseup');
+      wrapper.find('.ReactPiano__Key').first().simulate('mouseup');
 
       expect(mockPlayNote).toHaveBeenCalledTimes(1);
       expect(mockStopNote).toHaveBeenCalledTimes(1);
@@ -171,17 +165,11 @@ describe('<Piano />', () => {
         />,
       );
 
-      wrapper
-        .find('.ReactPiano__Key')
-        .first()
-        .simulate('mousedown');
+      wrapper.find('.ReactPiano__Key').first().simulate('mousedown');
 
       expect(mockPlayNote).toHaveBeenCalledTimes(0);
 
-      wrapper
-        .find('.ReactPiano__Key')
-        .first()
-        .simulate('mouseup');
+      wrapper.find('.ReactPiano__Key').first().simulate('mouseup');
 
       expect(mockStopNote).toHaveBeenCalledTimes(0);
     });
