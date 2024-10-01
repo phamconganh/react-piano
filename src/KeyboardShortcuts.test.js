@@ -17,7 +17,10 @@ describe('create', () => {
       ],
     });
 
-    expect(keyboardShortcuts).toEqual([{ key: 's', midiNumber: 40 }, { key: 'd', midiNumber: 41 }]);
+    expect(keyboardShortcuts).toEqual([
+      { key: 's', midiNumber: 40 },
+      { key: 'd', midiNumber: 41 },
+    ]);
   });
   test('does not create shortcuts exceeding lastNote', () => {
     const keyboardShortcuts = KeyboardShortcuts.create({
@@ -39,6 +42,9 @@ describe('create', () => {
       ],
     });
 
-    expect(keyboardShortcuts).toEqual([{ key: 's', midiNumber: 40 }, { key: 'd', midiNumber: 41 }]);
+    expect(keyboardShortcuts).toEqual([
+      { key: 's', midiNumber: 40 },
+      { key: 'd', midiNumber: 41 },
+    ]);
   });
 });
