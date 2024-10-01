@@ -23,6 +23,7 @@ class ControlledPiano extends React.Component {
         midiNumber: PropTypes.number.isRequired,
       }),
     ),
+    keysLayoutCallback: PropTypes.func,
   };
 
   static defaultProps = {
@@ -43,6 +44,7 @@ class ControlledPiano extends React.Component {
   state = {
     isMouseDown: false,
     useTouchEvents: false,
+    keyboardLayout: null,
   };
 
   componentDidMount() {
@@ -63,6 +65,13 @@ class ControlledPiano extends React.Component {
       });
     }
   }
+
+  handleKeysLayoutCallback = (layout) => {
+    this.setState({ keyboardLayout: layout });
+    if (this.props.keysLayoutCallback) {
+      this.props.keysLayoutCallback(layout);
+    }
+  };
 
   // This function is responsible for diff'ing activeNotes
   // and playing or stopping notes accordingly.
@@ -179,6 +188,7 @@ class ControlledPiano extends React.Component {
           gliss={this.state.isMouseDown}
           useTouchEvents={this.state.useTouchEvents}
           renderNoteLabel={this.renderNoteLabel}
+          keysLayoutCallback={this.handleKeysLayoutCallback}
         />
       </div>
     );
