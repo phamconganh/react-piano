@@ -66,11 +66,12 @@ class ControlledPiano extends React.Component {
     }
   }
 
-  handleKeysLayoutCallback = (layout) => {
-    this.setState({ keyboardLayout: layout });
-    if (this.props.keysLayoutCallback) {
-      this.props.keysLayoutCallback(layout);
-    }
+  handleKeysLayoutCallback = (positions) => {
+    this.setState({ keyboardLayout: positions }, () => {
+      if (this.props.keysLayoutCallback) {
+        this.props.keysLayoutCallback(positions);
+      }
+    });
   };
 
   // This function is responsible for diff'ing activeNotes
@@ -188,7 +189,9 @@ class ControlledPiano extends React.Component {
           gliss={this.state.isMouseDown}
           useTouchEvents={this.state.useTouchEvents}
           renderNoteLabel={this.renderNoteLabel}
-          keysLayoutCallback={this.handleKeysLayoutCallback}
+          keysLayoutCallback={(keyPositions) => {
+            this.handleKeysLayoutCallback(keyPositions);
+          }}
         />
       </div>
     );

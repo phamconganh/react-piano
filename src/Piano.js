@@ -28,6 +28,7 @@ class Piano extends React.Component {
 
   state = {
     activeNotes: this.props.activeNotes || [],
+    keysLayoutCallback: null,
   };
 
   componentDidUpdate(prevProps) {
@@ -74,14 +75,18 @@ class Piano extends React.Component {
     });
   };
 
+  handleKeysLayoutCallback = (positions) => {
+    this.setState({ keysLayoutCallback: positions });
+  };
+
   render() {
-    const { activeNotes, onPlayNoteInput, onStopNoteInput, keysLayoutCallback, ...otherProps } = this.props;
+    const { activeNotes, onPlayNoteInput, onStopNoteInput, ...otherProps } = this.props;
     return (
       <ControlledPiano
         activeNotes={this.state.activeNotes}
         onPlayNoteInput={this.handlePlayNoteInput}
         onStopNoteInput={this.handleStopNoteInput}
-        keysLayoutCallback={keysLayoutCallback}
+        keysLayoutCallback={this.handleKeysLayoutCallback}
         {...otherProps}
       />
     );

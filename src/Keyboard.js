@@ -23,6 +23,11 @@ class Keyboard extends React.Component {
     keysLayoutCallback: PropTypes.func,
   };
 
+  state = {
+    keyPositions: [],
+  };
+
+  
   static defaultProps = {
     disabled: false,
     gliss: false,
@@ -31,25 +36,17 @@ class Keyboard extends React.Component {
     renderNoteLabel: () => {},
   };
 
-  componentDidMount() {
-    this.callKeysLayoutCallback();
-  }
-
-  componentDidUpdate(prevProps) {
-    if (prevProps.width !== this.props.width || prevProps.noteRange !== this.props.noteRange) {
-      this.callKeysLayoutCallback();
-    }
-  }
-
-  callKeysLayoutCallback() {
-    if (this.props.keysLayoutCallback) {
-      const layout = {
-        width: this.getWidth(),
-        height: this.getHeight(),
-        naturalKeyWidth: this.getNaturalKeyWidth(),
-      };
-      this.props.keysLayoutCallback(layout);
-    }
+  handleKeyLayout = ({ left, width }) => {
+    const newKeyPositions = [
+      ...this.state.keyPositions,
+      { left, width }
+    ];
+    
+    this.setState({ keyPositions: newKeyPositions }, () => {
+      if (this.props.keysLayoutCallback) {
+        this.props.keysLayoutCallback(newKeyPositions);
+      }
+    });
   }
 
   // Range of midi numbers on keyboard
@@ -103,6 +100,7 @@ class Keyboard extends React.Component {
               onStopNoteInput={this.props.onStopNoteInput}
               gliss={this.props.gliss}
               useTouchEvents={this.props.useTouchEvents}
+              keysLayoutCallback={this.handleKeyLayout}
               key={midiNumber}
             >
               {this.props.disabled
