@@ -20,6 +20,7 @@ class Keyboard extends React.Component {
     useTouchEvents: PropTypes.bool,
     // If width is not provided, must have fixed width and height in parent container
     width: PropTypes.number,
+    onLayoutChange: PropTypes.func,
   };
 
   static defaultProps = {
@@ -27,8 +28,13 @@ class Keyboard extends React.Component {
     gliss: false,
     useTouchEvents: false,
     keyWidthToHeight: 0.33,
-    renderNoteLabel: () => {},
+    renderNoteLabel: () => { },
   };
+
+  constructor(props) {
+    super(props);
+    this.updateMidiKeys();
+  }
 
   // Range of midi numbers on keyboard
   getMidiNumbers() {
@@ -59,18 +65,79 @@ class Keyboard extends React.Component {
     return `${keyWidth / this.props.keyWidthToHeight}px`;
   }
 
+  componentDidMount() {
+    if (!this.props.onLayoutChange) return;
+    this.resizeObserver = new ResizeObserver(this.measureKeys.bind(this)); // Sử dụng bind để giữ nguyên context
+    this.resizeObserver.observe(this.keyboardRef.current); // Bắt đầu lắng nghe sự kiện resize
+  }
+
+  componentWillUnmount() {
+    if (!this.resizeObserver) return;
+    this.resizeObserver.disconnect(); // Hủy lắng nghe sự kiện resize
+    delete this.resizeObserver;
+  }
+
+  componentDidUpdate(prevProps) {
+    // Cập nhật midiKeys và refs nếu noteRange thay đổi
+    if (prevProps.noteRange !== this.props.noteRange) this.updateMidiKeys();
+
+    if (this.props.onLayoutChange && !this.resizeObserver) {
+      // Kiểm tra xem có cần khởi tạo lại ResizeObserver không
+      this.resizeObserver = new ResizeObserver(this.measureKeys.bind(this)); // Sử dụng bind để giữ nguyên context
+      this.resizeObserver.observe(this.keyboardRef.current);
+    } else if (!this.props.onLayoutChange && this.resizeObserver) {
+      this.resizeObserver.disconnect(); // Hủy lắng nghe sự kiện resize
+      delete this.resizeObserver;
+    }
+  }
+
+  updateMidiKeys() {
+    const tempMidiKeys = this.getMidiNumbers(); // Cập nhật midiKeys
+
+    // Nếu midiKeys không thay đổi thì không cần cập nhật refs
+    const isChange = !arraysEqual(tempMidiKeys, this.midiKeys);
+    if (isChange) this.midiKeys = tempMidiKeys;
+
+    // Chỉ khởi tạo lại keyRefs và keyLayouts khi onLayoutChange không phải là null
+    if (this.props.onLayoutChange) {
+      if (this.keyboardRef == null) this.keyboardRef = React.createRef();
+      if (this.keyRefs == null) this.keyRefs = {}; // Khởi tạo refs
+
+      if (isChange) {
+        // Tạo refs cho từng midiKey
+        this.midiKeys.forEach(midiNumber => {
+          this.keyRefs[midiNumber] = React.createRef();
+        });
+      }
+    } else if (this.keyRefs) {
+      delete this.keyRefs;
+    }
+  }
+
+  measureKeys() {
+    const layouts = this.midiKeys.map((midiNumber) => {
+      const keyComponent = this.keyRefs[midiNumber];
+      if (keyComponent) return keyComponent.current.getLayout();
+      return null;
+    }).filter(layout => layout !== null);
+
+    if (this.props.onLayoutChange) this.props.onLayoutChange(layouts); // Gọi callback với layouts mới
+  }
+
   render() {
     const naturalKeyWidth = this.getNaturalKeyWidth();
     return (
       <div
+        ref={this.keyboardRef}
         className={classNames('ReactPiano__Keyboard', this.props.className)}
         style={{ width: this.getWidth(), height: this.getHeight() }}
       >
-        {this.getMidiNumbers().map((midiNumber) => {
+        {this.midiKeys.map((midiNumber) => {
           const { note, isAccidental } = MidiNumbers.getAttributes(midiNumber);
           const isActive = !this.props.disabled && this.props.activeNotes.includes(midiNumber);
           return (
             <Key
+              ref={this.keyRefs != null ? this.keyRefs[midiNumber] : null} // Gán ref cho Key
               naturalKeyWidth={naturalKeyWidth}
               midiNumber={midiNumber}
               noteRange={this.props.noteRange}
@@ -82,20 +149,33 @@ class Keyboard extends React.Component {
               gliss={this.props.gliss}
               useTouchEvents={this.props.useTouchEvents}
               key={midiNumber}
+              exportLayout={this.props.onLayoutChange != null}
             >
               {this.props.disabled
                 ? null
                 : this.props.renderNoteLabel({
-                    isActive,
-                    isAccidental,
-                    midiNumber,
-                  })}
+                  isActive,
+                  isAccidental,
+                  midiNumber,
+                })}
             </Key>
           );
         })}
       </div>
     );
   }
+}
+
+function arraysEqual(arr1, arr2) {
+  if (arr1 == null || arr2 == null || arr1.length !== arr2.length) {
+    return false;
+  }
+  for (let i = 0; i < arr1.length; i++) {
+    if (arr1[i] !== arr2[i]) {
+      return false;
+    }
+  }
+  return true;
 }
 
 function isNaturalMidiNumber(value) {

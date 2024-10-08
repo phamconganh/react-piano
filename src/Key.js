@@ -18,6 +18,7 @@ class Key extends React.Component {
     accidentalWidthRatio: PropTypes.number.isRequired,
     pitchPositions: PropTypes.object.isRequired,
     children: PropTypes.node,
+    exportLayout: PropTypes.bool,
   };
 
   static defaultProps = {
@@ -62,6 +63,10 @@ class Key extends React.Component {
     );
   }
 
+  getLayout() {
+    return this.layout;
+  }
+
   render() {
     const {
       naturalKeyWidth,
@@ -75,6 +80,11 @@ class Key extends React.Component {
       children,
     } = this.props;
 
+    const left = ratioToPercentage(this.getRelativeKeyPosition(midiNumber) * naturalKeyWidth);
+    const width = ratioToPercentage(accidental ? accidentalWidthRatio * naturalKeyWidth : naturalKeyWidth);
+
+    if (this.props.exportLayout) this.layout = { midiNumber, left, width };
+
     // Need to conditionally include/exclude handlers based on useTouchEvents,
     // because otherwise mobile taps double fire events.
     return (
@@ -85,12 +95,7 @@ class Key extends React.Component {
           'ReactPiano__Key--disabled': disabled,
           'ReactPiano__Key--active': active,
         })}
-        style={{
-          left: ratioToPercentage(this.getRelativeKeyPosition(midiNumber) * naturalKeyWidth),
-          width: ratioToPercentage(
-            accidental ? accidentalWidthRatio * naturalKeyWidth : naturalKeyWidth,
-          ),
-        }}
+        style={{ left: left, width: width }}
         onMouseDown={useTouchEvents ? null : this.onPlayNoteInput}
         onMouseUp={useTouchEvents ? null : this.onStopNoteInput}
         onMouseEnter={gliss ? this.onPlayNoteInput : null}

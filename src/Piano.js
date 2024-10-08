@@ -24,6 +24,7 @@ class Piano extends React.Component {
         midiNumber: PropTypes.number.isRequired,
       }),
     ),
+    onLayoutChange: PropTypes.func,
   };
 
   state = {
