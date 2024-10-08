@@ -36,6 +36,11 @@ class Keyboard extends React.Component {
     this.keysLayout = [];
   }
 
+  componentDidMount() {
+    if(this.keysLayoutCallback){
+      this.keysLayoutCallback(this.keysLayout);
+    }
+  }
   // Range of midi numbers on keyboard
   getMidiNumbers() {
     return range(this.props.noteRange.first, this.props.noteRange.last + 1);
@@ -67,9 +72,6 @@ class Keyboard extends React.Component {
 
   handleKeysLayoutCallback = (keyLayoutInfo) => {
     this.keysLayout.push(keyLayoutInfo);
-    if (this.props.keysLayoutCallback) {
-      this.props.keysLayoutCallback(this.keysLayout);
-    }
   };
 
   render() {
