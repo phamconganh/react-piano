@@ -42,11 +42,12 @@ class Key extends React.Component {
   componentDidMount() {
     this.callKeysLayoutCallback();
   }
-  componentDidUpdate(prevProps) {
-    if (prevProps.naturalKeyWidth !== this.props.naturalKeyWidth) {
-      this.callKeysLayoutCallback();
-    }
-  }
+  
+  // componentDidUpdate(prevProps) {
+  //   if (prevProps.naturalKeyWidth !== this.props.naturalKeyWidth) {
+  //     this.callKeysLayoutCallback();
+  //   }
+  // }
 
   callKeysLayoutCallback = () => {
     if (this.props.keysLayoutCallback) {
