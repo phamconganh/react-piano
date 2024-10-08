@@ -18,6 +18,7 @@ class Key extends React.Component {
     accidentalWidthRatio: PropTypes.number.isRequired,
     pitchPositions: PropTypes.object.isRequired,
     children: PropTypes.node,
+    keysLayoutCallback: PropTypes.func,
   };
 
   static defaultProps = {
@@ -37,6 +38,33 @@ class Key extends React.Component {
       B: 6,
     },
   };
+
+  componentDidMount() {
+    this.callKeysLayoutCallback();
+  }
+
+  // componentDidUpdate(prevProps) {
+  //   if (prevProps.naturalKeyWidth !== this.props.naturalKeyWidth) {
+  //     this.callKeysLayoutCallback();
+  //   }
+  // }
+
+  callKeysLayoutCallback = () => {
+    if (this.props.keysLayoutCallback) {
+      const left = this.getRelativeKeyPosition(this.props.midiNumber) * this.props.naturalKeyWidth;
+      const width = this.props.accidental
+        ? this.props.accidentalWidthRatio * this.props.naturalKeyWidth
+        : this.props.naturalKeyWidth;
+      const midiNumber = this.props.midiNumber;
+      if (this.props.keysLayoutCallback) {
+        this.props.keysLayoutCallback({
+          midiNumber: midiNumber,
+          left: ratioToPercentage(left),
+          width: ratioToPercentage(width),
+        });
+      }
+    }
+  }
 
   onPlayNoteInput = () => {
     this.props.onPlayNoteInput(this.props.midiNumber);
