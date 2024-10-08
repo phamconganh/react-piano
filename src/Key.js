@@ -42,7 +42,7 @@ class Key extends React.Component {
   componentDidMount() {
     this.callKeysLayoutCallback();
   }
-  
+
   // componentDidUpdate(prevProps) {
   //   if (prevProps.naturalKeyWidth !== this.props.naturalKeyWidth) {
   //     this.callKeysLayoutCallback();
@@ -55,11 +55,14 @@ class Key extends React.Component {
       const width = this.props.accidental
         ? this.props.accidentalWidthRatio * this.props.naturalKeyWidth
         : this.props.naturalKeyWidth;
-
-      this.props.keysLayoutCallback({
-        left: ratioToPercentage(left),
-        width: ratioToPercentage(width),
-      });
+      const midiNumber = this.props.midiNumber;
+      if (this.props.keysLayoutCallback) {
+        this.props.keysLayoutCallback({
+          midiNumber: midiNumber,
+          left: ratioToPercentage(left),
+          width: ratioToPercentage(width),
+        });
+      }
     }
   }
 

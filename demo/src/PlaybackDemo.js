@@ -39,6 +39,9 @@ class PlaybackDemo extends React.Component {
     this.setState({ isPlaying: value });
   };
 
+  handleKeysLayoutCallback = (keysLayout) => {
+    console.log('Keys layout received:', keysLayout);
+  }
   render() {
     const noteRange = {
       first: MidiNumbers.fromNote('c3'),
@@ -79,6 +82,7 @@ class PlaybackDemo extends React.Component {
                     playNote={playNote}
                     stopNote={stopNote}
                     disabled={isLoading || !this.state.isPlaying}
+                    keysLayoutCallback={this.handleKeysLayoutCallback}
                   />
                 )}
               </DimensionsProvider>

@@ -31,6 +31,11 @@ class Keyboard extends React.Component {
     renderNoteLabel: () => {},
   };
 
+  constructor(props) {
+    super(props);
+    this.keysLayout = [];
+  }
+
   // Range of midi numbers on keyboard
   getMidiNumbers() {
     return range(this.props.noteRange.first, this.props.noteRange.last + 1);
@@ -60,6 +65,15 @@ class Keyboard extends React.Component {
     return `${keyWidth / this.props.keyWidthToHeight}px`;
   }
 
+  handleKeysLayoutCallback = (keyLayoutInfo) => {
+    this.keysLayout.push(keyLayoutInfo);
+    if (this.keysLayout.length === this.getMidiNumbers().length) {
+      if (this.props.keysLayoutCallback) {
+        this.props.keysLayoutCallback(this.keysLayout);
+      }
+    }
+  };
+
   render() {
     const naturalKeyWidth = this.getNaturalKeyWidth();
     return (
@@ -82,7 +96,7 @@ class Keyboard extends React.Component {
               onStopNoteInput={this.props.onStopNoteInput}
               gliss={this.props.gliss}
               useTouchEvents={this.props.useTouchEvents}
-              keysLayoutCallback={this.props.keysLayoutCallback}
+              keysLayoutCallback={this.handleKeysLayoutCallback}
               key={midiNumber}
             >
               {this.props.disabled
