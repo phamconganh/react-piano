@@ -20,8 +20,9 @@ class Keyboard extends React.Component {
     useTouchEvents: PropTypes.bool,
     // If width is not provided, must have fixed width and height in parent container
     width: PropTypes.number,
+    keysLayoutCallback: PropTypes.func,
   };
-
+  
   static defaultProps = {
     disabled: false,
     gliss: false,
@@ -29,6 +30,11 @@ class Keyboard extends React.Component {
     keyWidthToHeight: 0.33,
     renderNoteLabel: () => {},
   };
+
+  constructor(props) {
+    super(props);
+    this.keysLayout = [];
+  }
 
   // Range of midi numbers on keyboard
   getMidiNumbers() {
@@ -59,6 +65,15 @@ class Keyboard extends React.Component {
     return `${keyWidth / this.props.keyWidthToHeight}px`;
   }
 
+  handleKeysLayoutCallback = (keyLayoutInfo) => {
+    this.keysLayout.push(keyLayoutInfo);
+    if (this.keysLayout.length === this.getMidiNumbers().length) {
+      if (this.props.keysLayoutCallback) {
+        this.props.keysLayoutCallback(this.keysLayout);
+      }
+    }
+  };
+
   render() {
     const naturalKeyWidth = this.getNaturalKeyWidth();
     return (
@@ -81,6 +96,7 @@ class Keyboard extends React.Component {
               onStopNoteInput={this.props.onStopNoteInput}
               gliss={this.props.gliss}
               useTouchEvents={this.props.useTouchEvents}
+              keysLayoutCallback={this.handleKeysLayoutCallback}
               key={midiNumber}
             >
               {this.props.disabled

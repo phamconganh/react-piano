@@ -23,6 +23,7 @@ class ControlledPiano extends React.Component {
         midiNumber: PropTypes.number.isRequired,
       }),
     ),
+    keysLayoutCallback: PropTypes.func,
   };
 
   static defaultProps = {
@@ -179,6 +180,7 @@ class ControlledPiano extends React.Component {
           gliss={this.state.isMouseDown}
           useTouchEvents={this.state.useTouchEvents}
           renderNoteLabel={this.renderNoteLabel}
+          keysLayoutCallback={this.props.keysLayoutCallback}
         />
       </div>
     );
