@@ -67,10 +67,8 @@ class Keyboard extends React.Component {
 
   handleKeysLayoutCallback = (keyLayoutInfo) => {
     this.keysLayout.push(keyLayoutInfo);
-    if (this.keysLayout.length === this.getMidiNumbers().length) {
-      if (this.props.keysLayoutCallback) {
-        this.props.keysLayoutCallback(this.keysLayout);
-      }
+    if (this.props.keysLayoutCallback) {
+      this.props.keysLayoutCallback(this.keysLayout);
     }
   };
 
