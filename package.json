@@ -16,7 +16,7 @@
     "build:js": "rollup -c",
     "clean": "rimraf dist",
     "format": "prettier --write 'src/**/*' 'demo/src/**/*'",
-    "prepare": "if [ ! -d dist ]; then npm run build; fi",
+    "prepare": "test -d dist || npm run build",
     "start": "npm-run-all --parallel start:js start:css",
     "start:js": "rollup -c -w",
     "start:css": "postcss src/styles.css --use autoprefixer -d dist/ --no-map --watch",
